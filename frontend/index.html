@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepVision OCR — Document Extraction</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="/static/style.css?v=1">
+</head>
+<body>
+<div class="app">
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-brand">
+            <div class="brand-icon"><i class="fa-solid fa-file-lines"></i></div>
+            <div class="brand-text">
+                <span class="brand-name">DeepVision OCR</span>
+                <span class="brand-tagline">Document Intelligence Platform</span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <div class="token-field">
+                <i class="fa-solid fa-key"></i>
+                <input type="password" id="token-input" placeholder="Enter API token" autocomplete="off" spellcheck="false">
+                <button id="token-toggle" title="Toggle visibility">
+                    <i class="fa-solid fa-eye" id="toggle-icon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav>
+                <div class="nav-group">
+                    <span class="nav-label">Identity</span>
+                    <button class="nav-item active" data-endpoint="/extract_passport_details" data-label="Passport">
+                        <i class="fa-solid fa-passport"></i><span>Passport</span>
+                    </button>
+                    <button class="nav-item" data-endpoint="/extract_eid_details" data-label="Emirates ID">
+                        <i class="fa-solid fa-id-card"></i><span>Emirates ID</span>
+                    </button>
+                    <button class="nav-item" data-endpoint="/extract_dl_details" data-label="Driving License">
+                        <i class="fa-solid fa-car-side"></i><span>Driving License</span>
+                    </button>
+                </div>
+                <div class="nav-group">
+                    <span class="nav-label">Visa &amp; Entry</span>
+                    <button class="nav-item" data-endpoint="/extract_visa_details" data-label="Visa">
+                        <i class="fa-solid fa-stamp"></i><span>Visa</span>
+                    </button>
+                    <button class="nav-item" data-endpoint="/extract_evisa_details" data-label="E-Visa">
+                        <i class="fa-solid fa-globe"></i><span>E-Visa</span>
+                    </button>
+                </div>
+                <div class="nav-group">
+                    <span class="nav-label">Work &amp; Employment</span>
+                    <button class="nav-item" data-endpoint="/extract_mol_mb_details" data-label="MOL — MB">
+                        <i class="fa-solid fa-briefcase"></i><span>MOL — MB</span>
+                    </button>
+                    <button class="nav-item" data-endpoint="/extract_mol_st_details" data-label="MOL — ST">
+                        <i class="fa-solid fa-briefcase"></i><span>MOL — ST</span>
+                    </button>
+                    <button class="nav-item" data-endpoint="/extract_change_status_details" data-label="Status Change">
+                        <i class="fa-solid fa-arrows-rotate"></i><span>Status Change</span>
+                    </button>
+                    <button class="nav-item" data-endpoint="/extract_eid_application_details" data-label="EID Application">
+                        <i class="fa-solid fa-file-signature"></i><span>EID Application</span>
+                    </button>
+                </div>
+                <div class="nav-group">
+                    <span class="nav-label">Medical &amp; Other</span>
+                    <button class="nav-item" data-endpoint="/extract_medical_details" data-label="Medical Fitness">
+                        <i class="fa-solid fa-stethoscope"></i><span>Medical Fitness</span>
+                    </button>
+                    <button class="nav-item" data-endpoint="/extract_insurance_details" data-label="Insurance Card">
+                        <i class="fa-solid fa-shield-halved"></i><span>Insurance Card</span>
+                    </button>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main -->
+        <main class="main" id="main">
+            <div class="page-header">
+                <div class="page-title-row">
+                    <h1 id="page-title">Passport</h1>
+                    <span class="endpoint-badge" id="endpoint-badge">/extract_passport_details</span>
+                </div>
+                <p class="page-subtitle">Upload a document image or PDF — extracted fields will appear below.</p>
+            </div>
+
+            <!-- Upload Zone -->
+            <div class="upload-zone" id="upload-zone">
+                <input type="file" id="file-input" accept=".jpg,.jpeg,.png,.pdf" hidden>
+
+                <div class="upload-empty" id="upload-empty">
+                    <div class="upload-icon-wrap"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                    <p class="upload-primary">Drag &amp; drop your document here</p>
+                    <p class="upload-secondary">or</p>
+                    <button class="btn-browse" id="browse-btn">
+                        <i class="fa-solid fa-folder-open"></i>
+                        Browse File
+                    </button>
+                    <p class="upload-formats">JPG &nbsp;&bull;&nbsp; PNG &nbsp;&bull;&nbsp; PDF</p>
+                </div>
+
+                <div class="upload-preview" id="upload-preview" style="display:none">
+                    <img id="preview-img" src="" alt="Document preview" style="display:none">
+                    <div class="pdf-thumb" id="pdf-thumb" style="display:none">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </div>
+                    <div class="preview-meta">
+                        <span class="preview-name" id="preview-name"></span>
+                        <span class="preview-size" id="preview-size"></span>
+                    </div>
+                    <button class="btn-remove" id="btn-remove" title="Remove file">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Extract Button -->
+            <button class="btn-extract" id="btn-extract">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>Extract Data</span>
+            </button>
+
+            <!-- Loading -->
+            <div class="state-loading" id="state-loading" style="display:none">
+                <div class="loader-ring"></div>
+                <span>Processing document, please wait...</span>
+            </div>
+
+            <!-- Error -->
+            <div class="state-error" id="state-error" style="display:none">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span id="error-text"></span>
+            </div>
+
+            <!-- Results -->
+            <div class="results-card" id="results-card" style="display:none">
+                <div class="results-topbar">
+                    <div class="results-success-badge">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span id="success-label">Extraction successful</span>
+                    </div>
+                    <div class="results-controls">
+                        <button class="btn-copy" id="btn-copy">
+                            <i class="fa-solid fa-copy"></i>
+                            <span>Copy JSON</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="results-content" id="results-content"></div>
+            </div>
+        </main>
+
+    </div>
+</div>
+
+<script src="/static/script.js?v=2"></script>
+</body>
+</html>
